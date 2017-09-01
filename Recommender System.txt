@@ -1,0 +1,32 @@
+#Making directory
+mkdir MovieRecommenderSystem
+
+#Changing the directory
+cd MovieRecommenderSystem/
+
+#Copying the data-u.data to the present working directory-MovieRecommenderSystem
+cp /home/cloudera/Downloads/u.data $PWD
+
+#Converting u.data to data.csv and removing the forth column (timestamp)
+tr -s ':' ',' < u.data > data.csv | sed -i -r 's/\S+//4' data.csv
+
+# 1. Creating item-based recommender system with 10 recommendations for each user using cosine similarity as the distance measure
+mahout recommenditembased -i MovieRecommenderSystem/data.csv -o MovieRecommenderSystem/output.csv -n 10 -s SIMILARITY_COSINE
+
+#Creating a directory for saving output for cosine similarity
+cd  MovieRecommenderSystem/output.csv
+
+#Renaming the output file
+cat part-r-00000
+mv  part-r-00000 item_recommendation_cosine_similarity
+rm -rf temp/
+
+# 2. Creating item-based recommender system with 10 recommendations for each user using pearson correlation as the distance measure
+mahout recommenditembased -i MovieRecommenderSystem/data.csv -o MovieRecommenderSystem/pearson.csv -n 10 -s SIMILARITY_PEARSON_CORRELATION
+
+#Creating a directory for saving output for pearson correlation
+cd MovieRecommenderSystem/pearson.csv/
+
+#Renaming the output file
+cat part-r-00000
+mv  part-r-00000 item_recommnedation_pearson_correlation
